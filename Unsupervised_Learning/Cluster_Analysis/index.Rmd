@@ -1,0 +1,239 @@
+---
+title: "Unsupervised Learning: Hierarchical Cluster Analysis"
+author: Robert Adongo  
+date: "July 25, 2025"
+output:
+  # cleanrmd::html_document_clean:
+  #   theme: NULL
+  #   toc: true
+  #   toc_float: true
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: true
+    theme: flatly
+    highlight: tango
+    df_print: paged
+    #css: "custom.css"
+bibliography: references.bib
+csl: apa.csl
+link-citations: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+## Motivation and Goals 
+Clustering is a fundamental technique in unsupervised learning, aimed at grouping similar observations based on their characteristics. It is especially useful when no predefined class labels exist and a researcher seeks to uncover hidden structures in the data [@kaufman2009finding].
+
+In this project, we implement the `agnes` function and the `diana` function from the `cluster` package in R to perform agglomerative and divisive hierarchical clustering, respectively. Agglomerative methods start with each observation in its own cluster and iteratively merge the most similar clusters, while divisive methods begin with all observations in a single cluster and recursively split them based on dissimilarity [@kaufman2009finding; @macnaughton1965some].
+
+The goal of this section is to provide a theoretical background for hierarchical clustering, apply both methods to our dataset, and compare the resulting cluster structures using dendrograms and cluster evaluation metrics.
+
+## The `agnes` Function
+<pre> agnes(x, diss = inherits(x, "dist"), metric = "euclidean",
+      stand = FALSE, method = "average", par.method,
+      keep.diss = n < 100, keep.data = !diss, trace.lev = 0) </pre>
+
+## The `diana` Function
+<pre> diana(x, diss = inherits(x, "dist"), metric = "euclidean", stand = FALSE,
+      stop.at.k = FALSE,
+      keep.diss = n < 100, keep.data = !diss, trace.lev = 0)</pre>
+
+# Mathematical Setup
+## Dissimilarity and Proximity Matrices
+The mathematical setup of this section is based on the book [@hastie2009elements].
+In clustering, we often represent how alike or different objects are using a **proximity matrix**. Let $N$ be the number of objects. A proximity matrix $D$ of size $N \times N$ has entries $d_{ii'}$ that reflect dissimilarity between objects $i$ and $i'$. 
+
+Often it is assumed that the following conditions hold:
+
+- **Non-negativity**:  $d_{ii'} \geq 0 \quad \text{for all } i, i' \in \{1,2,\dots, N\}.$
+
+- **Zero diagonal** (self-similarity): $d_{ii} = 0 \quad \text{for all } i = 1, 2, \dots, N.$
+
+- **Symmetry**:  $d_{ii'} = d_{i'i} \quad \text{for all } i, i' \in \{1,2,\dots, N\}.$
+
+If the proximity was originally measured as **similarity** ($s_{ii'}$), it can be converted into dissimilarity using a **monotone-decreasing function**, such as:
+
+- Reciprocal transformation: $d_{ii'} = \frac{1}{s_{ii'}}.$
+
+- Difference from maximum:  $d_{ii'} = \max(S) - s_{ii'}.$
+
+Here, the $S$ is the similarity matrix and $s_{ii'}$ are the entries.
+If the matrix is not symmetric, it can be symmetrized using:
+$D^{\prime} \leftarrow \frac{D + D^T}{2}.$
+
+Finally, note that subjectively judged dissimilarities often do **not** satisfy the triangle inequality: $d_{ii'} \leq d_{ik} + d_{i'k}, \quad \text{for all } k = 1, \dots, N.$
+
+### Attribute-Based Dissimilarities
+
+In most clustering tasks, we are given data $\mathbf{x}_i = (x_{i1}, x_{i2}, \dots, x_{ip})$ for objects $i = 1, 2, \dots, N$ on $p$ variables (or **attributes**). Since clustering algorithms typically require a **dissimilarity matrix** as input, we first need to define **pairwise dissimilarities** between observations.
+
+We begin by specifying a univariate dissimilarity function $d_j(x_{ij}, x_{i'j})$ for each attribute $j$. A simple (unweighted) measure of dissimilarity between two observations is then:
+
+$$
+D(\mathbf{x}_i, \mathbf{x}_{i'}) = \sum_{j=1}^{p} d_j(x_{ij}, x_{i'j}). \quad \text{(1)}
+$$
+
+#### Quantitative Variables
+
+For real-valued variables, dissimilarity is typically a function of the absolute difference between values. A common choice is:
+
+* **Squared error**:
+
+  $$
+  d_j(x_{ij}, x_{i'j}) = (x_{ij} - x_{i'j})^2. \quad \text{(2)}
+  $$
+
+* **Absolute error**:
+
+  $$
+  d_j(x_{ij}, x_{i'j}) = |x_{ij} - x_{i'j}|. \quad \text{(3)}
+  $$
+
+Alternatively, dissimilarity may be based on **correlation** between attribute profiles of two observations:
+
+$$
+\rho(\mathbf{x}_i, \mathbf{x}_{i'}) = \frac{\sum_{j=1}^p (x_{ij} - \bar{x}_i)(x_{i'j} - \bar{x}_{i'})}{\sqrt{\sum_{j=1}^p (x_{ij} - \bar{x}_i)^2} \cdot \sqrt{\sum_{j=1}^p (x_{i'j} - \bar{x}_{i'})^2}}. \quad \text{(4)}
+$$
+
+Correlation coefficients—whether parametric (like Pearson) or nonparametric (such as Spearman or Kendall)—can be transformed into dissimilarity measures $d(\mathbf{x}_i, \mathbf{x}_{i'})$. One common approach is:
+
+$$
+d(\mathbf{x}_i, \mathbf{x}_{i'}) = \frac{1 - \rho(\mathbf{x}_i, \mathbf{x}_{i'})}{2} \quad \text{(5)}
+$$
+
+An alternative method defines dissimilarity based on the absolute value of the correlation:
+
+$$
+d(\mathbf{x}_i, \mathbf{x}_{i'}) = 1 - |\rho(\mathbf{x}_i, \mathbf{x}_{i'})| \quad \text{(6)}
+$$
+
+For a detailed comparison of these two approaches, see [@lance1979inver], who found that method (5) consistently outperformed the alternative. However, method (6) still demonstrated reasonably strong performance across a variety of datasets.
+
+
+#### Ordinal Variables
+
+For variables with ordered but not numeric levels (e.g., preference levels or grades), the values can be converted to equally spaced numeric scores. If an ordinal variable has $M$ ordered levels, we map each level $i$ to:
+
+$$
+z_i = \frac{i - 0.5}{M} \quad \text{for } i = 1, 2, \dots, M. \quad \text{(6)}
+$$
+
+The converted values $z_i$ are then treated as quantitative.
+
+#### Categorical Variables
+
+For nominal variables with $M$ unordered categories, dissimilarity is defined using a symmetric **loss matrix** $L$ with entries:
+
+* $L_{rr'} = 0$ if $r = r'$
+* $L_{rr'} \geq 0$ for $r \ne r'.$
+
+A common choice is:
+
+$$
+L_{rr'} = 
+\begin{cases}
+0 & \text{if } r = r' \\
+1 & \text{if } r \ne r'.
+\end{cases}
+$$
+
+This treats all mismatches as equally dissimilar, but $L$ can be customized to weight some mismatches more heavily than others.
+
+
+### Weighted Dissimilarities
+
+We often want to control how much each attribute contributes to the overall dissimilarity. To do this, we assign **weights** $w_j$ to attributes and compute:
+
+$$
+D(\mathbf{x}_i, \mathbf{x}_{i'}) = \sum_{j=1}^{p} w_j \cdot d_j(x_{ij}, x_{i'j}). \quad \text{(8)}
+$$
+
+with $\sum_{j=1}^{p} w_j = 1.$
+
+However, assigning equal weights ($w_j = 1/p$) does **not necessarily** ensure equal influence from all variables. A variable's true influence depends on its **average pairwise dissimilarity**, defined as:
+
+$$
+\bar{d}_j = \frac{1}{N^2} \sum_{i=1}^{N} \sum_{i'=1}^{N} d_j(x_{ij}, x_{i'j}). \quad \text{(10)}
+$$
+
+To equalize influence, weights can be set **inversely proportional** to $\bar{d}_j.$ That is, 
+$w_j \propto \frac{1}{\bar{d}_j}.$
+
+Suppose all variables are quantitative and squared differences are used, 
+
+$$
+D(\mathbf{x}_i, \mathbf{x}_{i'}) = \sum_{j=1}^p w_j (x_{ij} - x_{i'j})^2. \quad \text{(11)}
+$$
+
+This is the **(weighted) squared Euclidean distance**. In this case;
+
+$$
+\bar{d}_j = \frac{1}{N^2} \sum_{i=1}^{N} \sum_{i'=1}^{N} (x_{ij} - x_{i'j})^2 = 2 \cdot \text{Var}(X_j). \quad \text{(12)}
+$$
+
+So variables with higher variance will have more influence unless weights are adjusted.
+
+## Clustering Algorithms
+There are numerous clustering algorithms in the literature, making it impractical to review them all. [@bock1974automatische] conducted a comprehensive survey reflecting the state of the field in the early 1970s, but the area has grown significantly since then. This report focuses on hierarchical clustering, specifically agglomerative and divisive methods. Unlike other methods, hierarchical clustering does not require pre-specifying the number of clusters. Instead, it relies on a dissimilarity measure between groups, built from pairwise dissimilarities. The algorithm builds a hierarchy: starting with each observation as its own cluster, and successively merging them until all data points form a single cluster.
+
+
+### Agglomerative Clustering (Nesting)
+
+Agglomerative clustering starts by treating each observation \( \mathbf{x}_i \) as its own cluster. At each of the \( N - 1 \) steps, the two least dissimilar clusters are merged, reducing the total number of clusters by one. To perform this merging, we define the dissimilarity between two groups of observations or clusters, \( G \) and \( H \), using the pairwise dissimilarities \( d(\mathbf{x}_i, \mathbf{x}_{i'}) \) for \( i \in G \), \( i' \in H \). Let $|G|$ and $|H|$ denote their number of objects.
+
+Below are three commonly used definitions of intergroup dissimilarity:
+
+- **Single Linkage (Nearest Neighbor)** introduced by [@florek1951liaison;@sneath1957application]:
+\[
+d_{SL}(G, H) = \min_{i \in G, i' \in H} d(\mathbf{x}_i, \mathbf{x}_{i'})
+\]
+
+- **Complete Linkage (Furthest Neighbor)** described by [@mcquitty1960hierarchical;@sokal1963principles;@macnaughton1965some]:
+\[
+d_{CL}(G, H) = \max_{i \in G, i' \in H} d(\mathbf{x}_i, \mathbf{x}_{i'})
+\]
+
+- **Group Average** by [@sokal1958statistical]:
+\[
+d_{GA}(G, H) = \frac{1}{|G||H|} \sum_{i \in G} \sum_{i' \in H} d(\mathbf{x}_i, \mathbf{x}_{i'})
+\]
+
+Statistically, only the group average method estimates a meaningful population-level quantity as the sample size increases. As  $N \to \infty$,  the group average dissimilarity  $d_{GA}(G, H)$  converges to the expected dissimilarity between two distributions $p_G(x)$ and $p_H(x')$:
+
+$$
+\int d(x, x') \, p_G(x) \, p_H(x') \, dx \, dx'
+$$
+
+In contrast, single linkage and complete linkage do not estimate any meaningful population property in the limit. Single linkage tends toward zero regardless of the underlying distributions, and complete linkage tends toward infinity.
+
+### Divisive Clustering
+
+Divisive clustering is a top-down hierarchical method. It starts with the full dataset as one cluster and recursively splits it into two subclusters at each step. Although less studied than agglomerative methods, divisive clustering can be advantageous when the goal is to find a small number of large, well-separated clusters [@hastie2009elements].
+
+A simple but effective algorithm was proposed by [@macnaughton1965dissimilarity]. It begins by placing all observations in a single cluster \( G \). The algorithm selects the observation with the highest average dissimilarity from the rest to form a new cluster \( H \). At each step, it moves the observation in \( G \) that is most distant—on average—from other members of \( G \) and closest to \( H \). The process stops when no remaining observation in \( G \) is, on average, closer to those in \( H \).
+
+This results in a split: the observations in \( H \) and those remaining in \( G \). These become the two daughter clusters at the next level of the hierarchy.
+
+The process continues recursively. At each level, the cluster to be split is often chosen based on having the largest diameter:
+
+$$
+\text{diam}(G) = \max_{i,j \in G} d_{ij}
+$$
+
+An alternative is to choose the cluster with the largest average dissimilarity among its members:
+
+$$
+\bar{d}_G = \frac{1}{|G|^2} \sum_{i \in G} \sum_{i' \in G} d_{i i'}
+$$
+
+Splitting continues until all clusters are either singletons or all members within each cluster are identical (i.e., have zero dissimilarity).
+
+Unlike divisive methods based on k-means or k-medoids with \( K = 2 \), this approach does not depend on initialization and preserves the monotonicity needed for dendrogram representation.
+
+# Applications
+# References

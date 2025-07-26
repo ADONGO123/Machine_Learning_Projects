@@ -1,0 +1,369 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Unsupervised Learning: Hierarchical Cluster Analysis},
+  pdfauthor={Robert Adongo},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Unsupervised Learning: Hierarchical Cluster Analysis}
+\author{Robert Adongo}
+\date{}
+
+\begin{document}
+\maketitle
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+\hypertarget{motivation-and-goals}{%
+\subsection{Motivation and Goals}\label{motivation-and-goals}}
+
+Clustering is a fundamental technique in unsupervised learning, aimed at
+grouping similar observations based on their characteristics. It is
+especially useful when no predefined class labels exist and a researcher
+seeks to uncover hidden structures in the data
+(\protect\hyperlink{ref-kaufman2009finding}{Kaufman \& Rousseeuw,
+2009}).
+
+In this project, we implement the \texttt{agnes} function and the
+\texttt{diana} function from the \texttt{cluster} package in R to
+perform agglomerative and divisive hierarchical clustering,
+respectively. Agglomerative methods start with each observation in its
+own cluster and iteratively merge the most similar clusters, while
+divisive methods begin with all observations in a single cluster and
+recursively split them based on dissimilarity
+(\protect\hyperlink{ref-kaufman2009finding}{Kaufman \& Rousseeuw, 2009};
+\protect\hyperlink{ref-macnaughton1965some}{Macnaughton-Smith, 1965}).
+
+The goal of this section is to provide a theoretical background for
+hierarchical clustering, apply both methods to our dataset, and compare
+the resulting cluster structures using dendrograms and cluster
+evaluation metrics.
+
+\hypertarget{the-agnes-function}{%
+\subsection{\texorpdfstring{The \texttt{agnes}
+Function}{The agnes Function}}\label{the-agnes-function}}
+
+\hypertarget{the-diana-function}{%
+\subsection{\texorpdfstring{The \texttt{diana}
+Function}{The diana Function}}\label{the-diana-function}}
+
+\hypertarget{mathematical-setup}{%
+\section{Mathematical Setup}\label{mathematical-setup}}
+
+\hypertarget{dissimilarity-and-proximity-matrices}{%
+\subsection{Dissimilarity and Proximity
+Matrices}\label{dissimilarity-and-proximity-matrices}}
+
+Perfect, Robert. Based on your detailed notes and your request for
+\textbf{automatic equation numbering} and consistent notation, here is a
+clean R Markdown section written in math-mode-ready LaTeX using
+\texttt{bookdown} or \texttt{rmarkdown::pdf\_document} with
+\texttt{number\_sections:\ true} and \texttt{mathjax:\ default} or
+\texttt{latex\_engine:\ xelatex} to automatically number equations.
+
+We will build the \textbf{Mathematical Setup for Dissimilarity Matrices}
+with the same notations as in your earlier explanation (e.g.,
+\(d_{ii'}\), \(s_{ii'}\), etc.). Equations will be numbered
+automatically using LaTeX
+\texttt{\textbackslash{}begin\{equation\}\ ...\ \textbackslash{}end\{equation\}}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{r-markdown-setup-yaml-header}{%
+\subsection{✅ R Markdown Setup (YAML
+Header)}\label{r-markdown-setup-yaml-header}}
+
+Make sure your R Markdown starts with something like this for equation
+numbering:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\PreprocessorTok{{-}{-}{-}}
+\FunctionTok{title}\KeywordTok{:}\AttributeTok{ }\StringTok{"Clustering: Mathematical Setup"}
+\FunctionTok{author}\KeywordTok{:}\AttributeTok{ }\StringTok{"Robert Adongo"}
+\FunctionTok{output}\KeywordTok{:}
+\AttributeTok{  }\FunctionTok{pdf\_document}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{number\_sections}\KeywordTok{:}\AttributeTok{ }\CharTok{true}
+\AttributeTok{    }\FunctionTok{latex\_engine}\KeywordTok{:}\AttributeTok{ xelatex}
+\AttributeTok{    }\FunctionTok{keep\_tex}\KeywordTok{:}\AttributeTok{ }\CharTok{true}
+\AttributeTok{  }\FunctionTok{html\_document}\KeywordTok{:}
+\AttributeTok{    }\FunctionTok{number\_sections}\KeywordTok{:}\AttributeTok{ }\CharTok{true}
+\AttributeTok{    }\FunctionTok{mathjax}\KeywordTok{:}\AttributeTok{ default}
+\PreprocessorTok{{-}{-}{-}}
+\end{Highlighting}
+\end{Shaded}
+
+Now here's the content for the \textbf{Mathematical Setup} section:
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{mathematical-setup-for-dissimilarity-matrices}{%
+\subsection{1. Mathematical Setup for Dissimilarity
+Matrices}\label{mathematical-setup-for-dissimilarity-matrices}}
+
+\hypertarget{proximity-matrices}{%
+\subsubsection{Proximity Matrices}\label{proximity-matrices}}
+
+In clustering, we often represent relationships between objects using a
+\textbf{proximity matrix}. Let \(N\) be the number of objects. The
+proximity matrix \(D \in \mathbb{R}^{N \times N}\) has entries
+\(d_{ii'}\), where:
+
+\begin{equation}
+d\_{ii'} \geq 0
+\end{equation}
+
+\begin{equation}
+d\_{ii} = 0 \quad \text{for all } i = 1, \dots, N
+\end{equation}
+
+\begin{equation}
+d\_{ii'} = d\_{i'i}
+\end{equation}
+
+If the data is collected as \textbf{similarities} \(s_{ii'}\), we
+convert it to dissimilarities using a monotone decreasing function, such
+as:
+
+\begin{equation}
+d\_{ii'} = \frac{1}{s\_{ii'}} \quad \text{or} \quad d\_{ii'} = \max(S) - s\_{ii'}
+\end{equation}
+
+If the proximity matrix is not symmetric, we enforce symmetry by
+averaging:
+
+\begin{equation}
+D \leftarrow \frac{D + D^T}{2}
+\end{equation}
+
+Note that subjectively judged dissimilarities may \textbf{not} satisfy
+the triangle inequality:
+
+\begin{equation}
+d\_{ii'} \leq d\_{ik} + d\_{i'k}, \quad \forall k \in {1, \dots, N}
+\end{equation}
+
+\hypertarget{attribute-based-dissimilarities}{%
+\subsubsection{Attribute-Based
+Dissimilarities}\label{attribute-based-dissimilarities}}
+
+Suppose we have \(p\) attributes (variables), and
+\(\mathbf{x}_i = (x_{i1}, x_{i2}, \dots, x_{ip})\) denotes the feature
+vector for object \(i\). We define a dissimilarity between each
+attribute:
+
+\begin{equation}
+d\_j(x\_{ij}, x\_{i'j})
+\end{equation}
+
+Then the overall dissimilarity between objects \(i\) and \(i'\) is
+computed as:
+
+\begin{equation}
+D(\mathbf{x}*i, \mathbf{x}*{i'}) = \sum\_{j=1}^p d\_j(x\_{ij}, x\_{i'j})
+\end{equation}
+
+For \textbf{quantitative variables}, the most common choice is
+\textbf{squared difference}:
+
+\begin{equation}
+d\_j(x\_{ij}, x\_{i'j}) = (x\_{ij} - x\_{i'j})^2
+\end{equation}
+
+An alternative approach uses the \textbf{correlation-based similarity}:
+
+\begin{equation}
+\rho(\mathbf{x}*i, \mathbf{x}*{i'}) = \frac{\sum\_{j=1}^p (x\_{ij} - \bar{x}*i)(x*{i'j} - \bar{x}*{i'})}{\sqrt{\sum*{j=1}^p (x\_{ij} - \bar{x}*i)^2} \sqrt{\sum*{j=1}^p (x\_{i'j} - \bar{x}\_{i'})^2}}
+\end{equation}
+
+where \(\bar{x}_i = \frac{1}{p} \sum_{j=1}^p x_{ij}\). Correlation-based
+dissimilarity is then:
+
+\begin{equation}
+d(\mathbf{x}*i, \mathbf{x}*{i'}) \propto 2(1 - \rho(\mathbf{x}*i, \mathbf{x}*{i'}))
+\end{equation}
+
+\hypertarget{weighted-dissimilarities}{%
+\subsubsection{Weighted
+Dissimilarities}\label{weighted-dissimilarities}}
+
+We may weigh the importance of each attribute using weights \(w_j\),
+with \(\sum_{j=1}^p w_j = 1\). The dissimilarity becomes:
+
+\begin{equation}
+D(\mathbf{x}*i, \mathbf{x}*{i'}) = \sum\_{j=1}^p w\_j \cdot d\_j(x\_{ij}, x\_{i'j})
+\end{equation}
+
+The average dissimilarity on attribute \(j\) is:
+
+\begin{equation}
+\bar{d}*j = \frac{1}{N^2} \sum*{i=1}^N \sum\_{i'=1}^N d\_j(x\_{ij}, x\_{i'j})
+\end{equation}
+
+To give equal influence to all attributes, a common (though sometimes
+suboptimal) choice is:
+
+\begin{equation}
+w\_j = \frac{1}{\bar{d}\_j}
+\end{equation}
+
+\hypertarget{special-case-squared-euclidean-distance}{%
+\subsubsection{Special Case: Squared Euclidean
+Distance}\label{special-case-squared-euclidean-distance}}
+
+If all variables are quantitative and
+\(d_j(x_{ij}, x_{i'j}) = (x_{ij} - x_{i'j})^2\), then:
+
+\begin{equation}
+D(\mathbf{x}*i, \mathbf{x}*{i'}) = \sum\_{j=1}^p w\_j (x\_{ij} - x\_{i'j})^2
+\end{equation}
+
+Further, if \(\mathrm{Var}(X_j)\) is the sample variance of the \(j\)-th
+attribute, then:
+
+\begin{equation}
+\bar{d}*j = \frac{1}{N^2} \sum*{i=1}^N \sum\_{i'=1}^N (x\_{ij} - x\_{i'j})^2 = 2 \cdot \mathrm{Var}(X\_j)
+\end{equation}
+
+\hypertarget{references}{%
+\section*{References}\label{references}}
+\addcontentsline{toc}{section}{References}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-kaufman2009finding}{}}%
+Kaufman, L., \& Rousseeuw, P. J. (2009). \emph{Finding groups in data:
+An introduction to cluster analysis}. John Wiley \& Sons.
+
+\leavevmode\vadjust pre{\hypertarget{ref-macnaughton1965some}{}}%
+Macnaughton-Smith, P. (1965). \emph{Some statistical and other numerical
+techniques for classifying individuals}.
+
+\end{CSLReferences}
+
+\end{document}
