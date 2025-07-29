@@ -236,4 +236,77 @@ Splitting continues until all clusters are either singletons or all members with
 Unlike divisive methods based on k-means or k-medoids with \( K = 2 \), this approach does not depend on initialization and preserves the monotonicity needed for dendrogram representation.
 
 # Applications
+```{r loading libraries and data,message=FALSE, warning=FALSE}
+# Loading Libraries
+ library(tidyverse)
+ library(ggrepel)
+ library(cluster)
+ library(factoextra)
+ library(psych)
+#Reading Dataset
+dailyActivity<- read_csv("Datasets/dailyActivity_merged.csv", show_col_types = FALSE)
+dailyActivity <- dailyActivity[1:15,c(3,4,5,15)]
+```
+
+In this report, we will only look at continuous variables from the  **FitBit Fitness Tracker Data**. This dataset includes \( P = 13 \) variables measured across \( n = 940 \) observations from wearable fitness devices. The data combines daily activity records, sleep duration, hourly intensity levels, and second-level heart rate readings. It was obtained from Kaggle and constructed by merging four selected files from the original FitBit collection. For more details on this dataset, see **[FitBit Fitness Tracker Data](https://www.kaggle.com/datasets/arashnic/fitbit/data)**.
+
+
+**Dissimilarity Matrix**
+
+We start by defining a matrix of dissimilarity using the eucledian distance. As the variables have different magnitude of measurement, we will carry a z score standardization. 
+
+```{r}
+# Summary Statistics
+describe(dailyActivity)
+
+# Dissimilarity matrix
+D_matrix<-dist(x=scale(dailyActivity),method="euclidean")
+```
+The dissimilarity matrix `D_matrix` contains the pairwise Euclidean distances between 15 observations from the daily activity data. Each value reflects how similar or different two observations are based on the four standardized variables. For instance, the distance between Observation 3 and Observation 9 is approximately 0.123, indicating that these two users have very similar activity patterns across all measured features.
+
+With the dissimilarity matrix computed, we can now perform clustering. We'll begin with agglomerative clustering using the single linkage, complete linkage, and group average methods, as described in Section 2.2.1.
+
+```{r}
+# Single Linkage
+cluster_agg_single <- agnes(x = D_matrix, method = "single")
+
+# Complete Linkage
+cluster_agg_complete <- agnes(x = D_matrix, method = "complete")
+
+# Group Average
+cluster_agg_average <- agnes(x = D_matrix, method = "average")
+```
+
+**Single Linkage Method**
+
+We represent the results of the agglomerative clustering using the single linkage method by extracting the merging stages and corresponding distances from the `cluster_agg_single object`. Specifically, we combine the `merge` matrix and the `height` vector into a single data frame.
+
+```{r}
+coefficients_agg_single <- cluster_agg_single$height
+
+ agg_single <- as.data.frame(cbind(Stage=1:length(coefficients_agg_single), cluster_agg_single$merge,
+ coefficients_agg_single))
+ names(agg_single)<- c("Stage", "Cluster 1", "Cluster 2", "Distance")
+ agg_single
+```
+
+The `agg_single` data frame shows the agglomeration schedule from single linkage clustering. At each stage, two clusters or individual observations are merged based on the smallest Euclidean distance.
+
+In Stage 1, observations 3 and 9 are combined, as indicated by the negative signs, with a very small distance of 0.4502, showing high similarity. Similarly, Stage 2 merges 10 and 13 at a comparable distance.
+
+As clustering continues, some stages involve merging previously formed clusters (positive values) with individual observations or other clusters. For example, Stage 6 merges a cluster containing observations 4 and 2 with 1, and Stage 14 merges the final large cluster with observation 8.
+
+Distances increase gradually, reflecting the merging of less similar clusters over time.
+
+```{r}
+fviz_dend(x = cluster_agg_single,
+ k=2,
+ k_colors = c("orange", "darkorchid"),
+ color_labels_by_k = FALSE,
+ rect = TRUE,
+ rect_fill = TRUE,
+ lwd = 1,
+ ggtheme = theme_bw())
+```
+
 # References
